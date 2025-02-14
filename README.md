@@ -71,7 +71,4 @@ This project is licensed under the GPLv3 License.
 ## Contributions
 Feel free to submit pull requests or open issues to improve this script!
 
-## Installation Script
-To install `runitctl` system-wide, run the provided `install.sh` script with administrator privileges.
-
 
