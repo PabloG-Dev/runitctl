@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Check if at least one argument is provided
+if [ $# -lt 1 ]; then
+    echo "Usage: runitctl <action> [service]"
+    exit 1
+fi
+
+action=$1
+service=$2
+service_path="/var/service/$service"
+service_sv="/etc/sv/$service"
+
+case "$action" in
+    --help)
+        echo "Usage: runitctl <action> [service]"
+        echo "Available actions:"
+        echo "  start <service>    - Start a service"
+        echo "  stop <service>     - Stop a service"
+        echo "  restart <service>  - Restart a service"
+        echo "  status <service>   - Show the status of a service"
+        echo "  enable <service>   - Enable a service to start automatically"
+        echo "  disable <service>  - Disable a service from starting automatically"
+        echo "  list-active        - List currently active services"
+        echo "  list-all           - List all available services"
+        exit 0
+        ;;
+    start)
+        if [ ! -d "$service_path" ]; then
+            if [ -d "$service_sv" ]; then
+                echo "Service '$service' is available but not enabled. Enable it first with: runitctl enable $service"
+                exit 1
+            else
+                echo "Service '$service' does not exist. Check with: runitctl list-all"
+                exit 1
+            fi
+        fi
+        sv up "$service"
+        ;;
+    stop)
+        sv down "$service"
+        ;;
+    restart)
+        sv restart "$service"
+        ;;
+    status)
+        sv status "$service"
+        ;;
+    enable)
+        ln -s "$service_sv" "$service_path"
+        ;;
+    disable)
+        rm -f "$service_path"
+        ;;
+    list-active)
+        ls -1 /var/service
+        ;;
+    list-all)
+        ls -1 /etc/sv
+        ;;
+    *)
+        echo "Unsupported action. Use --help to see available options."
+        exit 1
+        ;;
+esac
