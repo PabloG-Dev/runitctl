@@ -38,18 +38,43 @@ case "$action" in
         sv up "$service"
         ;;
     stop)
+        if [ ! -d "$service_path" ]; then
+            echo "Service '$service' does not exist or is not enabled. Check with: runitctl list-active"
+            exit 1
+        fi
         sv down "$service"
         ;;
     restart)
+        if [ ! -d "$service_path" ]; then
+            echo "Service '$service' does not exist or is not enabled. Check with: runitctl list-active"
+            exit 1
+        fi
         sv restart "$service"
         ;;
     status)
+        if [ ! -d "$service_path" ]; then
+            echo "Service '$service' does not exist or is not enabled. Check with: runitctl list-active"
+            exit 1
+        fi
         sv status "$service"
         ;;
     enable)
+        if [ ! -d "$service_sv" ]; then
+            echo "Service '$service' does not exist. Check with: runitctl list-all"
+            exit 1
+        fi
         ln -s "$service_sv" "$service_path"
         ;;
     disable)
+        if [ ! -d "$service_path" ]; then
+            if [ -d "$service_sv" ]; then
+                echo "Service '$service' is already disabled."
+                exit 1
+            else
+                echo "Service '$service' does not exist. Check with: runitctl list-all"
+                exit 1
+            fi
+        fi
         rm -f "$service_path"
         ;;
     list-active)
@@ -63,3 +88,4 @@ case "$action" in
         exit 1
         ;;
 esac
+
