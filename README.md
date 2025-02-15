@@ -9,7 +9,7 @@
 - Provides a `--help` option for quick reference
 
 ## Installation
-Clone the repository and install the script:
+Clone the repository and run the script:
 
 ```bash
 git clone https://github.com/yourusername/runitctl.git
